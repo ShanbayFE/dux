@@ -1,0 +1,8 @@
+export const SEPARATOR = '_';
+
+export const ACTION_NAME_TAGS = {
+    FETCH: 'FETCH',
+    REQUEST: `REQUEST${SEPARATOR}`,
+    RECEIVE: `RECEIVE${SEPARATOR}`,
+    FAILURE: `FAILURE${SEPARATOR}`,
+};
