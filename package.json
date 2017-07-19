@@ -23,7 +23,8 @@
     "rollup-plugin-babel": "^2.7.1"
   },
   "dependencies": {
-    "babel-runtime": "^6.23.0"
+    "babel-runtime": "^6.23.0",
+    "normalizr": "^3.2.3"
   },
   "config": {
     "commitizen": {
