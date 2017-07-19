@@ -33,7 +33,8 @@ export const getFetchActionName = actionType =>
  * @param {String} actionName
  * @param {String} typePrefix
  */
-export const appendActionType = (actionName, typePrefix) => typePrefix + SEPARATOR + actionName;
+export const prependFetchAction = (actionName, typePrefix) =>
+    typePrefix + SEPARATOR + SEPARATOR + actionName;
 
 /**
  * reduce reducers
@@ -41,3 +42,9 @@ export const appendActionType = (actionName, typePrefix) => typePrefix + SEPARAT
  */
 export const reduceReducers = (...reducers) => (previous, current) =>
     reducers.reduce((p, r) => r(p, current), previous);
+
+/**
+ * generate action
+ * @param {String} args
+ */
+export const generateAction = (...args) => args.join(SEPARATOR);

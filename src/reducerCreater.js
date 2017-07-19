@@ -2,7 +2,7 @@ import {
     identity,
     getFetchActionName,
     isFetchActionType,
-    appendActionType,
+    prependFetchAction,
     reduceReducers,
 } from './utils';
 import { ACTION_NAME_TAGS } from './constants';
@@ -17,19 +17,25 @@ export const expandFetchHandler = (type, reducer, defaultState) => {
     const fetchActionName = getFetchActionName(type);
 
     return {
-        [appendActionType(fetchActionName, ACTION_NAME_TAGS.REQUEST)]: state =>
+        [prependFetchAction(fetchActionName, ACTION_NAME_TAGS.REQUEST)]: state =>
             Object.assign({}, defaultState, state, {
                 isFetching: true,
                 error: null,
             }),
 
-        [appendActionType(fetchActionName, ACTION_NAME_TAGS.RECEIVE)]: (state, action) =>
+        [prependFetchAction(fetchActionName, ACTION_NAME_TAGS.RECEIVE)]: (
+            state,
+            action,
+        ) =>
             Object.assign({}, state, reducer(state, action), {
                 isFetching: false,
                 error: null,
             }),
 
-        [appendActionType(fetchActionName, ACTION_NAME_TAGS.FAILURE)]: (state, action) =>
+        [prependFetchAction(fetchActionName, ACTION_NAME_TAGS.FAILURE)]: (
+            state,
+            action,
+        ) =>
             Object.assign({}, state, {
                 isFetching: false,
                 error: action.error,
