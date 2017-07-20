@@ -1,5 +1,7 @@
-export { default } from './middleware';
+import duxMiddleware from './middleware';
+import dux from './creator/dux';
 
-export * from './actionCreater';
-export * from './reducerCreater';
+export { duxMiddleware, dux };
+export * from './creator/action';
+export * from './creator/reducer';
 export * from './utils';

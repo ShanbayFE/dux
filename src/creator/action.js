@@ -1,4 +1,4 @@
-import { identity, isFetchActionType } from './utils';
+import { identity, isFetchActionType } from '../utils';
 
 /**
  * create a fetch action

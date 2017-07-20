@@ -48,3 +48,9 @@ export const reduceReducers = (...reducers) => (previous, current) =>
  * @param {String} args
  */
 export const generateAction = (...args) => args.join(SEPARATOR);
+
+/**
+ * check whether val is a function
+ * @param {*} val
+ */
+export const isFunction = val => Object.prototype.toString.call(val) === '[object Function]';
