@@ -17,28 +17,19 @@ export const expandFetchHandler = (type, reducer, defaultState) => {
     const fetchActionName = getFetchActionName(type);
 
     return {
-        [prependFetchAction(
-            fetchActionName,
-            ACTION_NAME_TAGS.REQUEST,
-        )]: state =>
+        [prependFetchAction(fetchActionName, ACTION_NAME_TAGS.REQUEST)]: state =>
             Object.assign({}, defaultState, state, {
                 isFetching: true,
                 error: null,
             }),
 
-        [prependFetchAction(fetchActionName, ACTION_NAME_TAGS.RECEIVE)]: (
-            state,
-            action,
-        ) =>
+        [prependFetchAction(fetchActionName, ACTION_NAME_TAGS.RECEIVE)]: (state, action) =>
             Object.assign({}, state, reducer(state, action), {
                 isFetching: false,
                 error: null,
             }),
 
-        [prependFetchAction(fetchActionName, ACTION_NAME_TAGS.FAILURE)]: (
-            state,
-            action,
-        ) =>
+        [prependFetchAction(fetchActionName, ACTION_NAME_TAGS.FAILURE)]: (state, action) =>
             Object.assign({}, state, {
                 isFetching: false,
                 error: action.error,
@@ -62,11 +53,7 @@ export const expandFetchHandlers = (handlers, defaultState) => {
         if (isFetchActionType(actionName)) {
             Object.assign(
                 expandedHandlers,
-                expandFetchHandler(
-                    actionName,
-                    handlers[actionName],
-                    defaultState,
-                ),
+                expandFetchHandler(actionName, handlers[actionName], defaultState),
             );
         } else {
             Object.assign(expandedHandlers, {
