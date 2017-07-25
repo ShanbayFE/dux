@@ -20,10 +20,7 @@ const duxMiddleware = ({ dispatch, getState }) => next => action => {
             return fetchAction
                 .catch(error => {
                     dispatch({
-                        type: prependFetchAction(
-                            fetchActionName,
-                            ACTION_NAME_TAGS.FAILURE,
-                        ),
+                        type: prependFetchAction(fetchActionName, ACTION_NAME_TAGS.FAILURE),
                         error,
                         payloads: options.payloads,
                     });
@@ -36,10 +33,7 @@ const duxMiddleware = ({ dispatch, getState }) => next => action => {
                     if (!data) return null;
 
                     dispatch({
-                        type: prependFetchAction(
-                            fetchActionName,
-                            ACTION_NAME_TAGS.RECEIVE,
-                        ),
+                        type: prependFetchAction(fetchActionName, ACTION_NAME_TAGS.RECEIVE),
                         data,
                         payloads: options.payloads,
                     });
