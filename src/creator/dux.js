@@ -3,44 +3,11 @@ import { normalize, schema } from 'normalizr';
 import { handleActions } from './reducer';
 import { createAction } from './action';
 
-import { generateAction, isFunction } from '../utils';
+import { generateAction, generateUrl, checkId } from '../utils';
 import { ACTION_NAME_TAGS } from '../constants';
-
-const generateUrl = (customUrl, baseUrl, params) => {
-    if (customUrl) {
-        if (typeof customUrl === 'string') {
-            return customUrl;
-        }
-
-        if (isFunction(customUrl)) {
-            return customUrl(params);
-        }
-    }
-
-    if (isFunction(baseUrl)) {
-        return baseUrl(params);
-    }
-
-    return baseUrl;
-};
-
-const checkId = id => {
-    if (!id) {
-        throw new Error('id is required');
-    }
-
-    if (typeof id !== 'string' && typeof id !== 'number') {
-        throw new Error(`id: "${id}" is invalid`);
-    }
-};
 
 const dux = (entityName, options) => {
     const upperEntityName = entityName.toUpperCase();
-
-    const entitySchema = new schema.Entity(entityName);
-    const entitiesSchema = {
-        objects: [entitySchema],
-    };
 
     const ACTIONS = {
         CREATE: generateAction(ACTION_NAME_TAGS.FETCH, 'CREATE', upperEntityName),
@@ -135,6 +102,11 @@ const dux = (entityName, options) => {
                 payloads: { id: actionOptions.id },
             });
         }
+
+        const entitySchema = new schema.Entity(entityName);
+        const entitiesSchema = {
+            objects: [entitySchema],
+        };
 
         const filters = actionOptions.filters;
         const params = actionOptions.params;

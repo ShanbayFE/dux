@@ -1,3 +1,5 @@
+import { normalize, schema } from 'normalizr';
+
 import { SEPARATOR, ACTION_NAME_TAGS } from './constants';
 
 /**
@@ -54,3 +56,64 @@ export const generateAction = (...args) => args.join(SEPARATOR);
  * @param {*} val
  */
 export const isFunction = val => Object.prototype.toString.call(val) === '[object Function]';
+
+export const generateUrl = (customUrl, baseUrl, params) => {
+    if (customUrl) {
+        if (typeof customUrl === 'string') {
+            return customUrl;
+        }
+
+        if (isFunction(customUrl)) {
+            return customUrl(params);
+        }
+    }
+
+    if (isFunction(baseUrl)) {
+        return baseUrl(params);
+    }
+
+    return baseUrl;
+};
+
+export const checkId = id => {
+    if (!id) {
+        throw new Error('id is required');
+    }
+
+    if (typeof id !== 'string' && typeof id !== 'number') {
+        throw new Error(`id: "${id}" is invalid`);
+    }
+};
+
+export const processData = (entityName, schemaType, data) => {
+    const entity = new schema.Entity(entityName);
+    const entitiesSchemas = {
+        array: [entity],
+        objects: {
+            objects: [entity],
+        },
+        object: entity,
+    };
+
+    if (schemaType) {
+        if (typeof schemaType === 'object') {
+            return normalize(data, schemaType);
+        }
+
+        return normalize(data, entitiesSchemas[schemaType]);
+    }
+
+    if (Array.isArray(data)) {
+        const normalizedData = normalize(data, entitiesSchemas.array);
+        normalizedData.result = { objects: normalizedData.result };
+        return normalizedData;
+    }
+
+    if (data.objects && data.total) {
+        return normalize(data, entitiesSchemas.objects);
+    }
+
+    const normalizedData = normalize(data, entitiesSchemas.object);
+    normalizedData.result = { objects: [normalizedData.result] };
+    return normalizedData;
+};
