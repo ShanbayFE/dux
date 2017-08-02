@@ -3,7 +3,7 @@ import { normalize, schema } from 'normalizr';
 import { handleActions } from './reducer';
 import { createAction } from './action';
 
-import { generateAction, generateUrl, checkId } from '../utils';
+import { generateAction, generateUrl, checkId, processData } from '../utils';
 import { ACTION_NAME_TAGS } from '../constants';
 
 const dux = (entityName, options) => {
@@ -92,36 +92,42 @@ const dux = (entityName, options) => {
             }),
         );
 
-    entity.read = (actionOptions = {}) => {
+    entity.read = (actionOptions = {}) => (dispatch, getState) => {
         const id = actionOptions.id;
 
         if (actionOptions.id) {
             checkId(actionOptions.id);
 
-            return createAction(ACTIONS.READ, () => dataGetter(`${baseUrl}${id}/`), {
-                payloads: { id: actionOptions.id },
-            });
+            return dispatch(
+                createAction(ACTIONS.READ, () => dataGetter(`${baseUrl}${id}/`), {
+                    payloads: { id: actionOptions.id },
+                }),
+            );
         }
 
-        const entitySchema = new schema.Entity(entityName);
-        const entitiesSchema = {
-            objects: [entitySchema],
-        };
+        let filters = actionOptions.filters;
+        let params = actionOptions.params;
 
-        const filters = actionOptions.filters;
-        const params = actionOptions.params;
+        if (actionOptions.flashBack) {
+            const { list } = getState()[entityName];
 
-        return createAction(
-            ACTIONS.READ,
-            () =>
-                dataGetter(generateUrl(options.readListUrl, baseUrl, params), {
-                    filters,
-                }).then(listData =>
-                    normalize(listData, actionOptions.entitiesSchema || entitiesSchema),
-                ),
-            {
-                payloads: { filters, params },
-            },
+            filters = list.filters;
+            params = list.params;
+        }
+
+        return dispatch(
+            createAction(
+                ACTIONS.READ,
+                () =>
+                    dataGetter(generateUrl(options.readListUrl, baseUrl, params), {
+                        filters,
+                    }).then(listData =>
+                        processData(entityName, actionOptions.schemaType, listData),
+                    ),
+                {
+                    payloads: { filters, params },
+                },
+            ),
         );
     };
 
@@ -199,6 +205,12 @@ const dux = (entityName, options) => {
         const entityState = store[entityName];
 
         return entityState.entities[id];
+    };
+
+    entity.getEntity = store => {
+        const entityState = store[entityName];
+
+        return entityState.entities;
     };
 
     entity.select = (store, selectOptions) => {

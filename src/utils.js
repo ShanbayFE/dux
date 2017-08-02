@@ -109,7 +109,7 @@ export const processData = (entityName, schemaType, data) => {
         return normalizedData;
     }
 
-    if (data.objects && data.total) {
+    if (data.objects && data.total !== null) {
         return normalize(data, entitiesSchemas.objects);
     }
 
