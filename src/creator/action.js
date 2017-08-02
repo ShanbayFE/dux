@@ -1,4 +1,4 @@
-import { identity } from './utils';
+import { identity, isFetchActionType } from '../utils';
 
 /**
  * create a fetch action
@@ -19,6 +19,14 @@ export const createFetchAction = (type, dataCreator, options) => ({
  * @param {Function} payloadsCreator
  */
 export const createAction = (type, payloadsCreator = identity, options) => {
+    if (isFetchActionType(type)) {
+        return {
+            type,
+            dataCreator: payloadsCreator,
+            options,
+        };
+    }
+
     const actionCreator = (...args) => {
         const action = {
             type,

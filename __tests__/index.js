@@ -64,9 +64,9 @@ describe('getFetchActionName', () => {
     });
 });
 
-describe('appendActionType', () => {
+describe('prependFetchAction', () => {
     it('append a to b', () => {
-        expect(duxFetch.appendActionType('b', 'a')).toBe('a_b');
+        expect(duxFetch.prependFetchAction('b', 'a')).toBe('a__b');
     });
 });
 
